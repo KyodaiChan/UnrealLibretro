@@ -30,8 +30,16 @@ jobs:
     runs-on: self-hosted
     strategy:
       matrix:
-        version: ["4.24", "4.25", "4.26", "4.27", "5.0", "5.1", "5.2", "5.3"]
-
+        version:
+          - {major: 4, minor: 24}
+          - {major: 4, minor: 25}
+          - {major: 4, minor: 26}
+          - {major: 4, minor: 27}
+          - {major: 5, minor: 0}
+          - {major: 5, minor: 1}
+          - {major: 5, minor: 2}
+          - {major: 5, minor: 3}
+        
     steps:
       - uses: actions/checkout@v3.5.2
 
@@ -39,14 +47,14 @@ jobs:
         run: C:\msys64\msys2_shell.cmd -defterm -here -no-start -mingw64 -shell bash setup.sh
 
       - name: Package for Unreal Engine
-        run: python package.py "$env:UE_${{ matrix.version[0] }}.${{ matrix.version[2] }}${{ matrix.version[3] }}" "$env:RUNNER_TEMP"
+        run: python package.py "$env:UE_${{ matrix.version.major }}.${{ matrix.version.minor }}" "$env:RUNNER_TEMP"
 
       - name: Upload Build-Artifact
         if: startsWith(github.ref, 'refs/heads/') # Upload artifacts when commits (not tags) are pushed
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: UnrealLibretro-${{ matrix.version }}
-          path: ${{ runner.temp }}/UnrealLibretro-${{ matrix.version }}
+          name: UnrealLibretro-${{ matrix.version.major }}.${{ matrix.version.minor }}
+          path: ${{ runner.temp }}/UnrealLibretro-${{ matrix.version.major }}.${{ matrix.version.minor }}
           if-no-files-found: error
 
       - name: Upload Release Asset
@@ -56,7 +64,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./my-artifact.zip
-          asset_name: my-artifact.zip
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ runner.temp }}/UnrealLibretro-${{ matrix.version.major }}.${{ matrix.version.minor }}.zip
+          asset_name: UnrealLibretro-${{ matrix.version.major }}.${{ matrix.version.minor }}.zip
           asset_content_type: application/zip
