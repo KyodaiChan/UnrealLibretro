@@ -3,14 +3,6 @@
 # and you should be able to load the plugin, and then try loading the example map in the plugin's content folder don't forget to enable "Show Plugin Content".
 
 # Prompt user to install 7zip if necessary
-if ! command -v 7z
-then
-    echo "7zip is not installed"
-    echo "Try one of these commands to install it:"
-    printf "\tMINGW: pacman -S --noconfirm --needed p7zip\n"
-    printf "\tMacOS: brew install p7zip\n"
-    exit 127;
-fi
 
 # Make directories that won't be dynamically generated
 mkdir -p MyROMs MyCores
