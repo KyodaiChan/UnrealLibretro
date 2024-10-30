@@ -27,7 +27,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 
   build:
-    runs-on: self-hosted
+    runs-on: windows-latest
     needs: create-release
     strategy:
       matrix:
